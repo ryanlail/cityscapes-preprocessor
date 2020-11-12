@@ -1,2 +1,2 @@
 # SemanticSegmentationToBoundingBox
-Convert semantic segmentation labels to bounding boxes
+Convert semantic segmentation labels to bounding boxes foe the City-Scapes dataset
