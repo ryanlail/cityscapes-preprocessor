@@ -6,12 +6,17 @@ from sklearn.cluster import KMeans
 import matplotlib.pyplot as plt
 import argparse
 
+# Convert RGB to Colour Name
+###############################################################################
+
 import webcolors
+
+# https://stackoverflow.com/a/9694246
 
 def closest_colour(requested_colour):
     min_colours = {}
-    for key, name in webcolors.CSS3_NAMES_TO_HEX.items():
-        r_c, g_c, b_c = webcolors.hex_to_rgb(name)
+    for key, name in webcolors.HTML4_HEX_TO_NAMES.items():
+        r_c, g_c, b_c = webcolors.hex_to_rgb(key)
         rd = (r_c - requested_colour[0]) ** 2
         gd = (g_c - requested_colour[1]) ** 2
         bd = (b_c - requested_colour[2]) ** 2
@@ -26,7 +31,10 @@ def get_colour_name(requested_colour):
         actual_name = None
     return actual_name, closest_name
 
+#############################################################################
 
+# https://www.pyimagesearch.com/2014/05/26/opencv-python-k-means-color-clustering/
+#############################################################################
 def centroid_histogram(clt):
 	# grab the number of different clusters and create a histogram
 	# based on the number of pixels assigned to each cluster
@@ -38,8 +46,11 @@ def centroid_histogram(clt):
 	# return the histogram
 	return hist
 
-def mode_pixel_colour_box(img, x1, y1, w, h):
-    # given a bounding box definitions and an image, return the mode pixel colour for that box
+#############################################################################
+
+def bounding_box_dominant_colour(img, x1, y1, w, h):
+    # given a bounding box definitions and an image, return the dominant colour for that box
+    
     roi = img[int(y1):int(y1+h), int(x1):int(x1+w)]
     
     #cv2.imshow("car", roi)
@@ -61,18 +72,15 @@ def mode_pixel_colour_box(img, x1, y1, w, h):
     hist = centroid_histogram(clt)
 
     max_cluster = np.argmax(hist)
-    rgb = clt.cluster_centers_[max_cluster]
+    rgb = clt.cluster_centers_[max_cluster].astype(int)
+    print(rgb)
     actual_name, closest_name = get_colour_name(rgb)
     print(actual_name, closest_name)
 
 filename = "../CityScapes/gtFine_trainvaltest/gtFine/train/zurich/zurich_000000_000019_gtFine_polygons.json"
-#image = cv2.imread("../CityScapes/gtFine_trainvaltest/gtFine/train/zurich/zurich_000000_000019_gtFine_color.png")
 
 image = cv2.imread("../CityScapes/leftimg8bit_trainvaltest/leftImg8bit/train/zurich/zurich_000000_000019_leftImg8bit.png")
-image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-#cv2.imshow("image", image)
-#cv2.waitKey(0)
-#cv2.destroyAllWindows()
+#image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
 
 with open(filename) as fh:
     data = json.load(fh)
@@ -98,7 +106,7 @@ with open(filename) as fh:
         if segment["label"] == "car":
             # only capture bottom half of car for best colour representation
             cv2.rectangle(image, (x1, y1), (x1+w, y1+h), 1, 5)
-            mode_pixel_colour_box(image, x1, y1+(h/2), w, h/2)
+            bounding_box_dominant_colour(image, x1, y1+(h/2), w, h/2)
 
     cv2.imshow("test", image)
     k = cv2.waitKey(0)
