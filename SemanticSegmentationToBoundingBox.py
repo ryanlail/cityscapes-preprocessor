@@ -68,41 +68,50 @@ def bounding_box_dominant_colour(img, x1, y1, w, h):
 
     print(get_colour_name(rgb))
 
-filename = "../CityScapes/gtFine_trainvaltest/gtFine/train/zurich/zurich_000000_000019_gtFine_polygons.json"
-
-image = cv2.imread("../CityScapes/leftimg8bit_trainvaltest/leftImg8bit/train/zurich/zurich_000000_000019_leftImg8bit.png")
-#image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-
-with open(filename) as fh:
-    data = json.load(fh)
-    segments = data["objects"]
-
-    for segment in segments:
-        # take labels x and y min and max to generate a bbox
-        
-        label = segment["label"]
-        vertices = segment["polygon"]
-        
-        x_vals = [coord[0] for coord in vertices]
-        y_vals = [coord[1] for coord in vertices]
-        
-        x1 = min(x_vals)
-        y1 = min(y_vals)
-        w = max(x_vals) - x1
-        h = max(y_vals) - y1
-        
-        #print(x1, y1, w, h)
-        #cv2.rectangle(image, (x1, y1), (x1+w, y1+h), 1, 5)
-
-        if segment["label"] == "car":
-            # only capture bottom half of car for best colour representation
-            cv2.rectangle(image, (x1, y1), (x1+w, y1+h), 1, 5)
-            bounding_box_dominant_colour(image, x1, y1+(h/2), w, h/2)
-
-    cv2.imshow("test", image)
-    k = cv2.waitKey(0)
 
 
+if __name__ == '__main__':
 
+    parser = argparse.ArgumentParser(
+        description='Perform ration on incoming camera/video image')
+    parser.add_argument(
+        'gtFine directory',
+        metavar='gtFine_directory',
+        type=str,
+        nargs='?',
+        help='location of the gtFine directory containing test train val annotations')
+    args = parser.parse_args()
 
+    filename = "../CityScapes/gtFine_trainvaltest/gtFine/train/zurich/zurich_000000_000019_gtFine_polygons.json"
 
+    image = cv2.imread("../CityScapes/leftimg8bit_trainvaltest/leftImg8bit/train/zurich/zurich_000000_000019_leftImg8bit.png")
+    #image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+
+    with open(filename) as fh:
+        data = json.load(fh)
+        segments = data["objects"]
+
+        for segment in segments:
+            # take labels x and y min and max to generate a bbox
+            
+            label = segment["label"]
+            vertices = segment["polygon"]
+            
+            x_vals = [coord[0] for coord in vertices]
+            y_vals = [coord[1] for coord in vertices]
+            
+            x1 = min(x_vals)
+            y1 = min(y_vals)
+            w = max(x_vals) - x1
+            h = max(y_vals) - y1
+            
+            #print(x1, y1, w, h)
+            #cv2.rectangle(image, (x1, y1), (x1+w, y1+h), 1, 5)
+
+            if segment["label"] == "car":
+                # only capture bottom half of car for best colour representation
+                cv2.rectangle(image, (x1, y1), (x1+w, y1+h), 1, 5)
+                bounding_box_dominant_colour(image, x1, y1+(h/2), w, h/2)
+
+        cv2.imshow("test", image)
+        k = cv2.waitKey(0)
