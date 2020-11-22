@@ -69,7 +69,7 @@ def bounding_box_dominant_colour(img, x1, y1, w, h):
     max_cluster = np.argmax(hist)
     rgb = clt.cluster_centers_[max_cluster].astype(int)
 
-    print(get_colour_name(rgb))
+    return get_colour_name(rgb)
 
 
 
@@ -107,7 +107,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
 
-    # generate new json
+
     # save to output directory maintaining structure
 
     # go into gtFine_directory
@@ -125,7 +125,48 @@ if __name__ == '__main__':
 
                     # for every json load corresponsing colour image from leftimg8bit_directory
                     image_path = os.path.join(args.leftimg8bit_directory, sub_set, city, annotation.replace("gtFine_polygons.json", "leftImg8bit.png"))
-                    cv2.imread(image_path)
+                    image = cv2.imread(image_path)
+                    
+                    # generate new json
+                    with open(annotation_path) as fh:
+                        data = json.load(fh)
+                        segments = data["objects"]
+                        
+                        bounding_boxes = []
+
+                        for segment in segments:
+                            # take labels x and y min and max to generate a bbox
+                            
+                            label = segment["label"]
+                            vertices = segment["polygon"]
+                            
+                            x_vals = [coord[0] for coord in vertices]
+                            y_vals = [coord[1] for coord in vertices]
+                            
+                            x1 = min(x_vals)
+                            y1 = min(y_vals)
+                            w = max(x_vals) - x1
+                            h = max(y_vals) - y1
+                            
+                            # draw bounding box
+                            # cv2.rectangle(image, (x1, y1), (x1+w, y1+h), 1, 5)
+
+                            object_attributes = {"label": segment["label"], "x1": x1, "y1": y1, "w": w, "h": h}
+                            
+                            if segment["label"] == "car":
+                                # only capture bottom half of car for best colour representation
+                                cv2.rectangle(image, (x1, y1), (x1+w, y1+h), 1, 5)
+                                colour = bounding_box_dominant_colour(image, x1, y1+(h/2), w, h/2)
+                                object_attributes["colour"] = colour
+                            
+
+                            # add bounding box to list
+                            bounding_boxes.append(object_attributes)
+
+                    generated_annotations = {"imgHeight": data["imgHeight"], "imgWidth": data["imgWidth"], "objects": bounding_boxes}
+                    print(generated_annotations)
+
+                    break
             break
         break
 
