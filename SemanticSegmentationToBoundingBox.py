@@ -106,21 +106,26 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
 
-    # go into gtFine_directory
-    # go into each test, train, val
-    # go into each city
-    # for every json load corresponsing colour image from leftimg8bit_directory
+
     # generate new json
     # save to output directory maintaining structure
 
+    # go into gtFine_directory
+    # go into each test, train, val
     for sub_set in os.listdir(args.gtFine_directory):
         sub_set_path = os.path.join(args.gtFine_directory, sub_set)
+
+        # go into each city
         for city in os.listdir(sub_set_path):
             city_path = os.path.join(sub_set_path, city)
-            for frame in os.listdir(city_path):
-                if frame.endswith(".json"):
-                    print(frame)
-            #print(os.listdir(city_path))
+
+            for annotation in os.listdir(city_path):
+                annotation_path = os.path.join(city_path, annotation)
+                if annotation.endswith(".json"):
+
+                    # for every json load corresponsing colour image from leftimg8bit_directory
+                    image_path = os.path.join(args.leftimg8bit_directory, sub_set, city, annotation.replace("gtFine_polygons.json", "leftImg8bit.png"))
+                    cv2.imread(image_path)
             break
         break
 
