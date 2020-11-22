@@ -108,7 +108,7 @@ if __name__ == '__main__':
 
 
 
-    # save to output directory maintaining structure
+
 
     # go into gtFine_directory
     # go into each test, train, val
@@ -122,7 +122,7 @@ if __name__ == '__main__':
             for annotation in os.listdir(city_path):
                 annotation_path = os.path.join(city_path, annotation)
                 if annotation.endswith(".json"):
-
+ 
                     # for every json load corresponsing colour image from leftimg8bit_directory
                     image_path = os.path.join(args.leftimg8bit_directory, sub_set, city, annotation.replace("gtFine_polygons.json", "leftImg8bit.png"))
                     image = cv2.imread(image_path)
@@ -143,8 +143,9 @@ if __name__ == '__main__':
                             x_vals = [coord[0] for coord in vertices]
                             y_vals = [coord[1] for coord in vertices]
                             
-                            x1 = min(x_vals)
-                            y1 = min(y_vals)
+                            # max to ensure co-ordinate is at least 0
+                            x1 = max(min(x_vals), 0)
+                            y1 = max(min(y_vals), 0)
                             w = max(x_vals) - x1
                             h = max(y_vals) - y1
                             
@@ -163,24 +164,15 @@ if __name__ == '__main__':
                             # add bounding box to list
                             bounding_boxes.append(object_attributes)
 
+                    # save to output directory maintaining structure
                     generated_annotations = {"imgHeight": data["imgHeight"], "imgWidth": data["imgWidth"], "objects": bounding_boxes}
-                    print(generated_annotations)
+                    output_path = os.path.join(args.output_directory, sub_set, city, annotation.replace("gtFine_polygons", "bounding_boxes"))
+                    
+                    if not os.path.exists(os.path.dirname(output_path)):
+                        os.makedirs(os.path.dirname(output_path))
 
-                    break
-            break
-        break
-
-
-
-
-
-
-
-
-
-
-
-
+                    with open(output_path, 'w') as fh:
+                        json.dump(generated_annotations, fh)
 
 
 
