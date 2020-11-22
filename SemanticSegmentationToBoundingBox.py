@@ -25,11 +25,10 @@ def closest_colour(requested_colour):
 
 def get_colour_name(requested_colour):
     try:
-        closest_name = actual_name = webcolors.rgb_to_name(requested_colour)
+        colour_name = webcolors.rgb_to_name(requested_colour)
     except ValueError:
-        closest_name = closest_colour(requested_colour)
-        actual_name = None
-    return actual_name, closest_name
+        colour_name = closest_colour(requested_colour)
+    return colour_name
 
 #############################################################################
 
@@ -49,16 +48,9 @@ def centroid_histogram(clt):
 #############################################################################
 
 def bounding_box_dominant_colour(img, x1, y1, w, h):
-    # given a bounding box definitions and an image, return the dominant colour for that box
+    # given a bounding box definitions and an image, return the dominant colour for that box via k-means clustering
     
     roi = img[int(y1):int(y1+h), int(x1):int(x1+w)]
-    
-    #cv2.imshow("car", roi)
-    #k = cv2.waitKey(0)
-    #print("CAR")
-    
-    # k means clustering
-    # https://www.pyimagesearch.com/2014/05/26/opencv-python-k-means-color-clustering/
     
     # reshape the image to be a list of pixels
     roi = roi.reshape((roi.shape[0] * roi.shape[1], 3))
@@ -73,9 +65,8 @@ def bounding_box_dominant_colour(img, x1, y1, w, h):
 
     max_cluster = np.argmax(hist)
     rgb = clt.cluster_centers_[max_cluster].astype(int)
-    print(rgb)
-    actual_name, closest_name = get_colour_name(rgb)
-    print(actual_name, closest_name)
+
+    print(get_colour_name(rgb))
 
 filename = "../CityScapes/gtFine_trainvaltest/gtFine/train/zurich/zurich_000000_000019_gtFine_polygons.json"
 
