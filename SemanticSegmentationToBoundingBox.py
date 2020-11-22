@@ -106,7 +106,37 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
 
-    print(args.gtFine_directory)
+    # go into gtFine_directory
+    # go into each test, train, val
+    # go into each city
+    # for every json load corresponsing colour image from leftimg8bit_directory
+    # generate new json
+    # save to output directory maintaining structure
+
+    for sub_set in os.listdir(args.gtFine_directory):
+        sub_set_path = os.path.join(args.gtFine_directory, sub_set)
+        for city in os.listdir(sub_set_path):
+            city_path = os.path.join(sub_set_path, city)
+            for frame in os.listdir(city_path):
+                if frame.endswith(".json"):
+                    print(frame)
+            #print(os.listdir(city_path))
+            break
+        break
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     """
 
