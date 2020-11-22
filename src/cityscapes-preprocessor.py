@@ -70,6 +70,68 @@ def bounding_box_dominant_colour(img, x1, y1, w, h):
 
     return get_colour_name(rgb)
 
+def generate_bounding_box(segment, box_attributes):
+
+    # take labels x and y min and max to generate a bbox
+    
+    label = segment["label"]
+    vertices = segment["polygon"]
+    
+    x_vals = [coord[0] for coord in vertices]
+    y_vals = [coord[1] for coord in vertices]
+    
+    # max to ensure co-ordinate is at least 0
+    x1 = max(min(x_vals), 0)
+    y1 = max(min(y_vals), 0)
+    w = max(x_vals) - x1
+    h = max(y_vals) - y1
+
+    box_attributes["x1"] = x1
+    box_attributes["y1"] = y1
+    box_attributes["w"] = w
+    box_attributes["h"] = h
+
+    return box_attributes
+
+def generate_colour(segment, box_attributes):
+
+    x1 = box_attributes["x1"]
+    x2 = box_attributes["y1"]
+    w = box_attributes["w"]
+    h = box_attributes["h"]
+
+    if segment["label"] == "car":
+        # only capture bottom half of car for best colour representation
+        colour = bounding_box_dominant_colour(image, x1, y1+(h/2), w, h/2)
+        box_attributes["colour"] = colour
+
+    return box_attributes
+
+
+def generate_annotations(annotation_path, image_path):
+
+    image = cv2.imread(image_path)
+    
+    # generate new json
+    with open(annotation_path) as fh:
+        data = json.load(fh)
+        segments = data["objects"]
+        
+        bounding_boxes = []
+
+        for segment in segments:
+
+            box_attributes = dict()
+            box_attributes["label"] = segment["label"]
+
+            box_attributes = generate_bounding_box(segment, box_attributes)
+
+            box_attributes = generate_colour(segment, box_attributes)
+
+            # add bounding box to list
+            bounding_boxes.append(box_attributes)
+
+    return {"imgHeight": data["imgHeight"], "imgWidth": data["imgWidth"], "objects": bounding_boxes}
 
 
 if __name__ == '__main__':
@@ -120,47 +182,10 @@ if __name__ == '__main__':
  
                     # for every json load corresponsing colour image from leftimg8bit_directory
                     image_path = os.path.join(args.leftimg8bit_directory, sub_set, city, annotation.replace("gtFine_polygons.json", "leftImg8bit.png"))
-                    image = cv2.imread(image_path)
                     
-                    # generate new json
-                    with open(annotation_path) as fh:
-                        data = json.load(fh)
-                        segments = data["objects"]
-                        
-                        bounding_boxes = []
-
-                        for segment in segments:
-                            # take labels x and y min and max to generate a bbox
-                            
-                            label = segment["label"]
-                            vertices = segment["polygon"]
-                            
-                            x_vals = [coord[0] for coord in vertices]
-                            y_vals = [coord[1] for coord in vertices]
-                            
-                            # max to ensure co-ordinate is at least 0
-                            x1 = max(min(x_vals), 0)
-                            y1 = max(min(y_vals), 0)
-                            w = max(x_vals) - x1
-                            h = max(y_vals) - y1
-                            
-                            # draw bounding box
-                            # cv2.rectangle(image, (x1, y1), (x1+w, y1+h), 1, 5)
-
-                            object_attributes = {"label": segment["label"], "x1": x1, "y1": y1, "w": w, "h": h}
-                            
-                            if segment["label"] == "car":
-                                # only capture bottom half of car for best colour representation
-                                cv2.rectangle(image, (x1, y1), (x1+w, y1+h), 1, 5)
-                                colour = bounding_box_dominant_colour(image, x1, y1+(h/2), w, h/2)
-                                object_attributes["colour"] = colour
-                            
-
-                            # add bounding box to list
-                            bounding_boxes.append(object_attributes)
+                    generated_annotations = generate_annotations(annotation_path, image_path)
 
                     # save to output directory maintaining structure
-                    generated_annotations = {"imgHeight": data["imgHeight"], "imgWidth": data["imgWidth"], "objects": bounding_boxes}
                     output_path = os.path.join(args.output_directory, sub_set, city, annotation.replace("gtFine_polygons", "bounding_boxes"))
                     
                     if not os.path.exists(os.path.dirname(output_path)):
