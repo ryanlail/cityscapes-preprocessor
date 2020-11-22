@@ -78,20 +78,17 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(
         description="Extract bounding box and colour data from the cityscapes dataset")
     parser.add_argument(
-        'gtFine directory',
-        metavar='gtFine_directory',
+        'gtFine_directory',
         type=str,
         nargs='?',
         help='location of the gtFine directory containing test train val annotations')
     parser.add_argument(
-        'leftimg8bit directory',
-        metavar='leftimg8bit_directory',
+        'leftimg8bit_directory',
         type=str,
         nargs='?',
         help='location of the leftimg8bit directory containing test train val images')
     parser.add_argument(
-        'output directory',
-        metavar='otuput_directory',
+        'output_directory',
         type=str,
         nargs='?',
         help='location of where generated annotation files should be produced')
@@ -108,6 +105,10 @@ if __name__ == '__main__':
     """
 
     args = parser.parse_args()
+
+    print(args.gtFine_directory)
+
+    """
 
 
     ##################################################################################
@@ -144,3 +145,5 @@ if __name__ == '__main__':
 
         cv2.imshow("test", image)
         k = cv2.waitKey(0)
+
+    """
