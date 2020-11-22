@@ -1,19 +1,16 @@
 import json
 import cv2
 import numpy as np
-
 import sys
 import os
-
 from sklearn.cluster import KMeans
 import matplotlib.pyplot as plt
 import argparse
+import webcolors
+
 
 # Convert RGB to Colour Name
 ###############################################################################
-
-import webcolors
-
 # https://stackoverflow.com/a/9694246
 
 def closest_colour(requested_colour):
@@ -35,8 +32,9 @@ def get_colour_name(requested_colour):
 
 #############################################################################
 
-# https://www.pyimagesearch.com/2014/05/26/opencv-python-k-means-color-clustering/
+
 #############################################################################
+# https://www.pyimagesearch.com/2014/05/26/opencv-python-k-means-color-clustering/
 def centroid_histogram(clt):
 	# grab the number of different clusters and create a histogram
 	# based on the number of pixels assigned to each cluster
@@ -49,6 +47,7 @@ def centroid_histogram(clt):
 	return hist
 
 #############################################################################
+
 
 def bounding_box_dominant_colour(img, x1, y1, w, h):
     # given a bounding box definitions and an image, return the dominant colour for that box via k-means clustering
@@ -105,10 +104,6 @@ if __name__ == '__main__':
     """
 
     args = parser.parse_args()
-
-
-
-
 
     # go into gtFine_directory
     # go into each test, train, val
