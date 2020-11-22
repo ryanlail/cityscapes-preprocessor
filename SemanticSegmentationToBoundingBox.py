@@ -2,6 +2,9 @@ import json
 import cv2
 import numpy as np
 
+import sys
+import os
+
 from sklearn.cluster import KMeans
 import matplotlib.pyplot as plt
 import argparse
@@ -73,15 +76,41 @@ def bounding_box_dominant_colour(img, x1, y1, w, h):
 if __name__ == '__main__':
 
     parser = argparse.ArgumentParser(
-        description='Perform ration on incoming camera/video image')
+        description="Extract bounding box and colour data from the cityscapes dataset")
     parser.add_argument(
         'gtFine directory',
         metavar='gtFine_directory',
         type=str,
         nargs='?',
         help='location of the gtFine directory containing test train val annotations')
+    parser.add_argument(
+        'leftimg8bit directory',
+        metavar='leftimg8bit_directory',
+        type=str,
+        nargs='?',
+        help='location of the leftimg8bit directory containing test train val images')
+    parser.add_argument(
+        'output directory',
+        metavar='otuput_directory',
+        type=str,
+        nargs='?',
+        help='location of where generated annotation files should be produced')
+
+
+    """
+    make bounding box optional. Could extend to colour extraction too.
+
+    parser.add_argument(
+        "-b",
+        "--generate_bounding_boxes",
+        action='store_true',
+        help="generate boudning boxes in resultant dataset")
+    """
+
     args = parser.parse_args()
 
+
+    ##################################################################################
     filename = "../CityScapes/gtFine_trainvaltest/gtFine/train/zurich/zurich_000000_000019_gtFine_polygons.json"
 
     image = cv2.imread("../CityScapes/leftimg8bit_trainvaltest/leftImg8bit/train/zurich/zurich_000000_000019_leftImg8bit.png")
