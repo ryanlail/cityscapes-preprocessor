@@ -5,17 +5,28 @@ A package containing various preprocessing tools for the [Cityscapes dataset](ht
 - [Bounding box generation](#bounding-box-generation)
 - [Car colour extraction](#car-colour-extraction)
 
-# Usage
+# Installation
 
 1. Download and extract the `gtFine_trainvaltest.zip (241MB)` and `leftImg8bit_trainvaltest.zip (11GB)` datasets from https://www.cityscapes-dataset.com/ to a directory of your choosing.
 
 2. 
 
-        ```
-        $ git clone https://github.com/tobybreckon/DoG-saliency.git
-        $ cd DoG-saliency
+        $ git clone https://github.com/ryanlail/cityscapes-preprocessor.git
+        $ cd cityscapes-preprocessor
         $ python3.x -m pip install -r requirements.txt
-        ```
+        
+# Instructions to use
+
+Run the following command to generate the new annotations from the dataset:
+
+```
+$ python3.x cityscapes-preprocessor.py [-h] [gtFine_directory] [leftimg8bit_directory] [output_directory]
+```
+positional arguments:
+-   `gtFine_directory`&nbsp;&nbsp;specify the location of the directory called `gtFine` (containing sub-directories `train`, `test`, and `val`)
+-   `leftimg8bit_directory`&nbsp;&nbsp;specify the location of the directory called `leftimg8bit` (containing sub-directories `train`, `test`, and `val`)
+-   `output_directory`&nbsp;&nbsp;specify the location where you would like the generated annoatations to be stored
+
 
 # Documentation
 
