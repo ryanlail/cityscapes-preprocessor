@@ -1,16 +1,14 @@
+import os
+import argparse
 import json
 import cv2
 import numpy as np
-import sys
-import os
 from sklearn.cluster import KMeans
-import matplotlib.pyplot as plt
-import argparse
 import webcolors
 
 
 # Convert RGB to Colour Name
-###############################################################################
+###################################################################################################
 # https://stackoverflow.com/a/9694246
 
 def closest_colour(requested_colour):
@@ -30,35 +28,36 @@ def get_colour_name(requested_colour):
         colour_name = closest_colour(requested_colour)
     return colour_name
 
-#############################################################################
+###################################################################################################
 
 
-#############################################################################
+###################################################################################################
 # https://www.pyimagesearch.com/2014/05/26/opencv-python-k-means-color-clustering/
 def centroid_histogram(clt):
-	# grab the number of different clusters and create a histogram
-	# based on the number of pixels assigned to each cluster
-	numLabels = np.arange(0, len(np.unique(clt.labels_)) + 1)
-	(hist, _) = np.histogram(clt.labels_, bins = numLabels)
-	# normalize the histogram, such that it sums to one
-	hist = hist.astype("float")
-	hist /= hist.sum()
-	# return the histogram
-	return hist
+    # grab the number of different clusters and create a histogram
+    # based on the number of pixels assigned to each cluster
+    numLabels = np.arange(0, len(np.unique(clt.labels_)) + 1)
+    (hist, _) = np.histogram(clt.labels_, bins=numLabels)
+    # normalize the histogram, such that it sums to one
+    hist = hist.astype("float")
+    hist /= hist.sum()
+    # return the histogram
+    return hist
+###################################################################################################
 
-#############################################################################
 
-
+###################################################################################################
 def bounding_box_dominant_colour(img, x1, y1, w, h):
-    # given a bounding box definitions and an image, return the dominant colour for that box via k-means clustering
-    
+    # given a bounding box definitions and an image, return the dominant colour for that box via
+    # k-means clustering
+
     roi = img[int(y1):int(y1+h), int(x1):int(x1+w)]
-    
+
     # reshape the image to be a list of pixels
     roi = roi.reshape((roi.shape[0] * roi.shape[1], 3))
 
     # cluster the pixel intensities
-    clt = KMeans(n_clusters = 5)
+    clt = KMeans(n_clusters=5)
     clt.fit(roi)
 
     # build a histogram of clusters and then create a figure
@@ -73,13 +72,13 @@ def bounding_box_dominant_colour(img, x1, y1, w, h):
 def generate_bounding_box(segment, box_attributes):
 
     # take labels x and y min and max to generate a bbox
-    
+
     label = segment["label"]
     vertices = segment["polygon"]
-    
+
     x_vals = [coord[0] for coord in vertices]
     y_vals = [coord[1] for coord in vertices]
-    
+
     # max to ensure co-ordinate is at least 0
     x1 = max(min(x_vals), 0)
     y1 = max(min(y_vals), 0)
@@ -111,12 +110,12 @@ def generate_colour(segment, box_attributes):
 def generate_annotations(annotation_path, image_path):
 
     image = cv2.imread(image_path)
-    
+
     # generate new json
     with open(annotation_path) as fh:
         data = json.load(fh)
         segments = data["objects"]
-        
+
         bounding_boxes = []
 
         for segment in segments:
@@ -154,23 +153,12 @@ if __name__ == '__main__':
         nargs='?',
         help='location of where generated annotation files should be produced')
 
-
-    """
-    make bounding box optional. Could extend to colour extraction too.
-
-    parser.add_argument(
-        "-b",
-        "--generate_bounding_boxes",
-        action='store_true',
-        help="generate boudning boxes in resultant dataset")
-    """
-
-    args = parser.parse_args()
+    ARGS = parser.parse_args()
 
     # go into gtFine_directory
     # go into each test, train, val
-    for sub_set in os.listdir(args.gtFine_directory):
-        sub_set_path = os.path.join(args.gtFine_directory, sub_set)
+    for sub_set in os.listdir(ARGS.gtFine_directory):
+        sub_set_path = os.path.join(ARGS.gtFine_directory, sub_set)
 
         # go into each city
         for city in os.listdir(sub_set_path):
@@ -179,18 +167,21 @@ if __name__ == '__main__':
             for annotation in os.listdir(city_path):
                 annotation_path = os.path.join(city_path, annotation)
                 if annotation.endswith(".json"):
- 
+
                     # for every json load corresponsing colour image from leftimg8bit_directory
-                    image_path = os.path.join(args.leftimg8bit_directory, sub_set, city, annotation.replace("gtFine_polygons.json", "leftImg8bit.png"))
-                    
+                    image_path = os.path.join(ARGS.leftimg8bit_directory, sub_set, city,
+                                              annotation.replace("gtFine_polygons.json",
+                                                                 "leftImg8bit.png"))
+
                     generated_annotations = generate_annotations(annotation_path, image_path)
 
                     # save to output directory maintaining structure
-                    output_path = os.path.join(args.output_directory, sub_set, city, annotation.replace("gtFine_polygons", "bounding_boxes"))
-                    
+                    output_path = os.path.join(ARGS.output_directory, sub_set, city,
+                                               annotation.replace("gtFine_polygons",
+                                                                  "bounding_boxes"))
+
                     if not os.path.exists(os.path.dirname(output_path)):
                         os.makedirs(os.path.dirname(output_path))
 
                     with open(output_path, 'w') as fh:
                         json.dump(generated_annotations, fh)
-
