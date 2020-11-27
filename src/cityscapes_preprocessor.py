@@ -4,8 +4,6 @@ import json
 import cv2
 import numpy as np
 from sklearn.cluster import KMeans
-import webcolors
-from utils import closest_colour
 from utils import get_colour_name
 from utils import centroid_histogram
 
@@ -34,7 +32,6 @@ def bounding_box_dominant_colour(img, x1, y1, w, h):
 def generate_bounding_box(segment, box_attributes):
     # take labels x and y min and max to generate a bbox
 
-    label = segment["label"]
     vertices = segment["polygon"]
 
     x_vals = [coord[0] for coord in vertices]
