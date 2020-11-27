@@ -53,24 +53,53 @@ Example annotation file:
 
 ```
 {
-    "imgHeight":1024,
-    "imgWidth":2048,
-    "objects":[
-        {
-            "label":"ego vehicle",
-            "x1":271,
-            "y1":844,
-            "w":1757,
-            "h":179
-        },
-        {
-            "label":"out of roi",
-            "x1":0,
-            "y1":0,
-            "w":2048,
-            "h":1024
-        }
-    ]
+  "imgHeight": 1025,
+  "imgWidth": 2048,
+  "objects": [
+    {
+      "label": "road",
+      "x1": 0,
+      "y1": 431,
+      "w": 2047,
+      "h": 592
+    },
+    {
+      "label": "sidewalk",
+      "x1": 1746,
+      "y1": 667,
+      "w": 301,
+      "h": 57
+    },
+    {
+      "label": "terrain",
+      "x1": 294,
+      "y1": 641,
+      "w": 1564,
+      "h": 98
+    },
+    {
+      "label": "sidewalk",
+      "x1": 0,
+      "y1": 409,
+      "w": 2047,
+      "h": 244
+    },
+    {
+      "label": "sky",
+      "x1": 426,
+      "y1": 0,
+      "w": 1621,
+      "h": 314
+    },
+    {
+      "label": "vegetation",
+      "x1": 1815,
+      "y1": 109,
+      "w": 210,
+      "h": 236
+    },
+    ...
+  ]
 }
 ```
 
