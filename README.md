@@ -35,7 +35,15 @@ generated
 ...
 ```
 
+Each object's annotation in each image is given in the corresponding json, with key-value pairs.
+
 ## Bounding box generation
+
+Each boudning box is denoted by (x1, x2, w, h) where:
+- x1 - x value for leftmost pixel in bounding box
+- y1 - y value for leftmost pixel in bounding box
+- w - width of boudning box from x1
+- h - height of bounding box from y1
 
 ## Car colour extraction
 
