@@ -37,6 +37,31 @@ generated
 
 Each object's annotation in each image is given in the corresponding json, with key-value pairs.
 
+Example annotation file:
+
+```
+{
+    "imgHeight":1024,
+    "imgWidth":2048,
+    "objects":[
+        {
+            "label":"ego vehicle",
+            "x1":271,
+            "y1":844,
+            "w":1757,
+            "h":179
+        },
+        {
+            "label":"out of roi",
+            "x1":0,
+            "y1":0,
+            "w":2048,
+            "h":1024
+        }
+    ]
+}
+```
+
 ## Bounding box generation
 
 Each boudning box is denoted by (x1, x2, w, h) where:
