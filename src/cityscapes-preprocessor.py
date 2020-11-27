@@ -5,48 +5,10 @@ import cv2
 import numpy as np
 from sklearn.cluster import KMeans
 import webcolors
+from utils import closest_colour
+from utils import get_colour_name
+from utils import centroid_histogram
 
-
-# Convert RGB to Colour Name
-###################################################################################################
-# https://stackoverflow.com/a/9694246
-
-def closest_colour(requested_colour):
-    min_colours = {}
-    for key, name in webcolors.HTML4_HEX_TO_NAMES.items():
-        r_c, g_c, b_c = webcolors.hex_to_rgb(key)
-        rd = (r_c - requested_colour[0]) ** 2
-        gd = (g_c - requested_colour[1]) ** 2
-        bd = (b_c - requested_colour[2]) ** 2
-        min_colours[(rd + gd + bd)] = name
-    return min_colours[min(min_colours.keys())]
-
-def get_colour_name(requested_colour):
-    try:
-        colour_name = webcolors.rgb_to_name(requested_colour)
-    except ValueError:
-        colour_name = closest_colour(requested_colour)
-    return colour_name
-
-###################################################################################################
-
-
-###################################################################################################
-# https://www.pyimagesearch.com/2014/05/26/opencv-python-k-means-color-clustering/
-def centroid_histogram(clt):
-    # grab the number of different clusters and create a histogram
-    # based on the number of pixels assigned to each cluster
-    numLabels = np.arange(0, len(np.unique(clt.labels_)) + 1)
-    (hist, _) = np.histogram(clt.labels_, bins=numLabels)
-    # normalize the histogram, such that it sums to one
-    hist = hist.astype("float")
-    hist /= hist.sum()
-    # return the histogram
-    return hist
-###################################################################################################
-
-
-###################################################################################################
 def bounding_box_dominant_colour(img, x1, y1, w, h):
     # given a bounding box definitions and an image, return the dominant colour for that box via
     # k-means clustering
@@ -92,10 +54,10 @@ def generate_bounding_box(segment, box_attributes):
 
     return box_attributes
 
-def generate_colour(segment, box_attributes):
+def generate_colour(segment, box_attributes, image):
 
     x1 = box_attributes["x1"]
-    x2 = box_attributes["y1"]
+    y1 = box_attributes["y1"]
     w = box_attributes["w"]
     h = box_attributes["h"]
 
@@ -125,7 +87,7 @@ def generate_annotations(annotation_path, image_path):
 
             box_attributes = generate_bounding_box(segment, box_attributes)
 
-            box_attributes = generate_colour(segment, box_attributes)
+            box_attributes = generate_colour(segment, box_attributes, image)
 
             # add bounding box to list
             bounding_boxes.append(box_attributes)
