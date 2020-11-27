@@ -10,11 +10,12 @@ A package containing various preprocessing tools for the [Cityscapes dataset](ht
 1. Download and extract the `gtFine_trainvaltest.zip (241MB)` and `leftImg8bit_trainvaltest.zip (11GB)` datasets from https://www.cityscapes-dataset.com/ to a directory of your choosing.
 
 2. 
-```
-$ git clone https://github.com/tobybreckon/DoG-saliency.git
-$ cd DoG-saliency
-$ python3.x -m pip install -r requirements.txt
-```
+
+        ```
+        $ git clone https://github.com/tobybreckon/DoG-saliency.git
+        $ cd DoG-saliency
+        $ python3.x -m pip install -r requirements.txt
+        ```
 
 # Documentation
 
