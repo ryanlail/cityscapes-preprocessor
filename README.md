@@ -1,4 +1,4 @@
-# cityscapes-preprocessor
+# Cityscapes Preprocessor
 
 A package containing various preprocessing tools for the [Cityscapes dataset](https://www.cityscapes-dataset.com/). This tool extracts further annotations from the original dataset. Tools include:
 
