@@ -32,7 +32,6 @@ def bounding_box_dominant_colour(img, x1, y1, w, h):
     return get_colour_name(rgb)
 
 def generate_bounding_box(segment, box_attributes):
-
     # take labels x and y min and max to generate a bbox
 
     label = segment["label"]
@@ -68,7 +67,6 @@ def generate_colour(segment, box_attributes, image):
 
     return box_attributes
 
-
 def generate_annotations(annotation_path, image_path):
 
     image = cv2.imread(image_path)
@@ -93,7 +91,6 @@ def generate_annotations(annotation_path, image_path):
             bounding_boxes.append(box_attributes)
 
     return {"imgHeight": data["imgHeight"], "imgWidth": data["imgWidth"], "objects": bounding_boxes}
-
 
 if __name__ == '__main__':
 
