@@ -20,7 +20,7 @@ A package containing various preprocessing tools for the [Cityscapes dataset](ht
 Run the following command to generate the new annotations from the dataset:
 
 ```
-$ python3.x cityscapes-preprocessor.py [-h] [gtFine_directory] [leftimg8bit_directory] [output_directory]
+$ python3.x cityscapes_preprocessor.py [-h] [gtFine_directory] [leftimg8bit_directory] [output_directory]
 ```
 positional arguments:
 -   `gtFine_directory`&nbsp;&nbsp;specify the location of the directory called `gtFine` (containing sub-directories `train`, `test`, and `val`)
