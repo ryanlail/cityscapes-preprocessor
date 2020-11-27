@@ -30,8 +30,8 @@ def get_colour_name(requested_colour):
 def centroid_histogram(clt):
     # grab the number of different clusters and create a histogram
     # based on the number of pixels assigned to each cluster
-    numLabels = np.arange(0, len(np.unique(clt.labels_)) + 1)
-    (hist, _) = np.histogram(clt.labels_, bins=numLabels)
+    num_labels = np.arange(0, len(np.unique(clt.labels_)) + 1)
+    (hist, _) = np.histogram(clt.labels_, bins=num_labels)
     # normalize the histogram, such that it sums to one
     hist = hist.astype("float")
     hist /= hist.sum()
