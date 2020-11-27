@@ -47,4 +47,4 @@ Each boudning box is denoted by (x1, x2, w, h) where:
 
 ## Car colour extraction
 
-blah blah blah
+The colour of cars are given in the object annotation under key "colour". The colours are given in standard HTML4 format, see [here](https://www.w3.org/TR/2002/WD-css3-color-20020418/#html4)
