@@ -3,6 +3,7 @@ from PIL import Image
 from torchvision import transforms
 from sklearn.manifold import TSNE
 import numpy as np
+import matplotlib.pyplot as plt
 
 model = torch.hub.load('pytorch/vision:v0.6.0', 'vgg16', pretrained=True)
 
@@ -41,9 +42,9 @@ def generate_feature_vector(filename):
 #torch.manual_seed(seed)
 #np.random.seed(seed)
 
-features = np.empty([100,1000])
+features = np.empty([1000,1000])
 
-for batch in range(1, 10):
+for batch in range(1, 1000):
     print(batch)
     filename = "../../rois/" + str(batch) + ".png"
     feature_vector = generate_feature_vector(filename)
@@ -51,6 +52,14 @@ for batch in range(1, 10):
 #features_np = np.array(features)
 
 tsne = TSNE(n_components=2).fit_transform(features)
+print(tsne)
+
+plt.scatter(features[:,0], features[:,1])
+plt.title('TSNE')
+plt.xlabel('x')
+plt.ylabel('y')
+plt.show()
+
 
 # scale and move the coordinates so they fit [0; 1] range
 def scale_to_01_range(x):
