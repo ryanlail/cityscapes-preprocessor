@@ -7,6 +7,8 @@ from sklearn.cluster import KMeans
 from utils import get_colour_name
 from utils import centroid_histogram
 
+count = 0
+
 def bounding_box_dominant_colour(img, x1, y1, w, h):
     # given a bounding box definitions and an image, return the dominant colour for that box via
     # k-means clustering
@@ -52,6 +54,9 @@ def generate_bounding_box(segment, box_attributes):
 
 def generate_colour(segment, box_attributes, image):
 
+    ##
+    global count
+
     x1 = box_attributes["x1"]
     y1 = box_attributes["y1"]
     w = box_attributes["w"]
@@ -61,6 +66,13 @@ def generate_colour(segment, box_attributes, image):
         # only capture bottom half of car for best colour representation
         colour = bounding_box_dominant_colour(image, x1, y1+(h/2), w, h/2)
         box_attributes["colour"] = colour
+        
+        ##
+        if w > 100 and h > 100:
+            roi = image[int(y1):int(y1+h), int(x1):int(x1+w)]
+            cv2.imwrite("../../rois2/"+str(count)+".png", roi)
+            print("done")
+            count += 1
 
     return box_attributes
 
@@ -115,7 +127,10 @@ if __name__ == '__main__':
     # go into each test, train, val
     for sub_set in os.listdir(ARGS.gtFine_directory):
         sub_set_path = os.path.join(ARGS.gtFine_directory, sub_set)
-
+        
+        ##
+        if sub_set == "test": continue
+        
         # go into each city
         for city in os.listdir(sub_set_path):
             city_path = os.path.join(sub_set_path, city)
