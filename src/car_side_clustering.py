@@ -7,9 +7,6 @@ import matplotlib.pyplot as plt
 
 model = torch.hub.load('pytorch/vision:v0.6.0', 'vgg16', pretrained=True)
 
-#filename = "../../rois/1.png"
-
-
 ########################################################### generate feature vector
 def generate_feature_vector(filename):
     input_image = Image.open(filename)
@@ -37,22 +34,17 @@ def generate_feature_vector(filename):
 
 ####################################################### TSNE
 
-#seed = 10
-#random.seed(seed)
-#torch.manual_seed(seed)
-#np.random.seed(seed)
-
+paths = []
 features = np.empty([1000,1000])
 
 for batch in range(1, 1000):
-    print(batch)
     filename = "../../rois/" + str(batch) + ".png"
     feature_vector = generate_feature_vector(filename)
     features[batch] = feature_vector.cpu().numpy()
-#features_np = np.array(features)
+    paths.append(filename)
+    print(filename)
 
 tsne = TSNE(n_components=2).fit_transform(features)
-print(tsne)
 
 # scale and move the coordinates so they fit [0; 1] range
 def scale_to_01_range(x):
@@ -73,14 +65,38 @@ tx = scale_to_01_range(tx)
 ty = scale_to_01_range(ty)
 
 
-
+"""
 plt.scatter(tx, ty)
 plt.title('TSNE')
 plt.xlabel('x')
 plt.ylabel('y')
 plt.show()
+"""
 
+from matplotlib.offsetbox import OffsetImage, AnnotationBbox
+import cv2
 
+def getImage(path):
+    return OffsetImage(cv2.resize(plt.imread(path), (50, 50)))
+"""
+paths = [
+    '../.jpg',
+    'b.jpg',
+    'c.jpg',
+    'd.jpg',
+    'e.jpg']
+
+x = [0,1,2,3,4]
+y = [0,1,2,3,4]
+"""
+fig, ax = plt.subplots()
+ax.scatter(tx, ty) 
+
+for x0, y0, path in zip(tx, ty,paths):
+    ab = AnnotationBbox(getImage(path), (x0, y0), frameon=False)
+    ax.add_artist(ab)
+
+plt.show()
 
 """
 # initialize a matplotlib plot
