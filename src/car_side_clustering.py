@@ -54,13 +54,6 @@ for batch in range(1, 1000):
 tsne = TSNE(n_components=2).fit_transform(features)
 print(tsne)
 
-plt.scatter(features[:,0], features[:,1])
-plt.title('TSNE')
-plt.xlabel('x')
-plt.ylabel('y')
-plt.show()
-
-
 # scale and move the coordinates so they fit [0; 1] range
 def scale_to_01_range(x):
     # compute the distribution range
@@ -80,6 +73,16 @@ tx = scale_to_01_range(tx)
 ty = scale_to_01_range(ty)
 
 
+
+plt.scatter(tx, ty)
+plt.title('TSNE')
+plt.xlabel('x')
+plt.ylabel('y')
+plt.show()
+
+
+
+"""
 # initialize a matplotlib plot
 fig = plt.figure()
 ax = fig.add_subplot(111)
@@ -104,3 +107,4 @@ ax.legend(loc='best')
 
 # finally, show the plot
 plt.show()
+"""
