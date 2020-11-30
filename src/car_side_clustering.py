@@ -4,6 +4,9 @@ from torchvision import transforms
 from sklearn.manifold import TSNE
 import numpy as np
 import matplotlib.pyplot as plt
+from matplotlib.offsetbox import OffsetImage, AnnotationBbox
+import cv2
+from sklearn.cluster import KMeans
 
 model = torch.hub.load('pytorch/vision:v0.6.0', 'vgg16', pretrained=True)
 
@@ -35,10 +38,10 @@ def generate_feature_vector(filename):
 ####################################################### TSNE
 
 paths = []
-features = np.empty([1000,1000])
+features = np.empty([2000,1000])
 
-for batch in range(1, 1000):
-    filename = "../../rois/" + str(batch) + ".png"
+for batch in range(1, 2000):
+    filename = "../../rois2/" + str(batch) + ".png"
     feature_vector = generate_feature_vector(filename)
     features[batch] = feature_vector.cpu().numpy()
     paths.append(filename)
@@ -64,63 +67,28 @@ ty = tsne[:, 1]
 tx = scale_to_01_range(tx)
 ty = scale_to_01_range(ty)
 
+########################### K-Means
+kmeans = KMeans(n_clusters=3, random_state=0).fit(np.column_stack((tx,ty)))
 
-"""
-plt.scatter(tx, ty)
-plt.title('TSNE')
-plt.xlabel('x')
-plt.ylabel('y')
-plt.show()
-"""
+print(kmeans.labels_)
 
-from matplotlib.offsetbox import OffsetImage, AnnotationBbox
-import cv2
 
 def getImage(path):
     return OffsetImage(cv2.resize(plt.imread(path), (50, 50)))
-"""
-paths = [
-    '../.jpg',
-    'b.jpg',
-    'c.jpg',
-    'd.jpg',
-    'e.jpg']
 
-x = [0,1,2,3,4]
-y = [0,1,2,3,4]
-"""
 fig, ax = plt.subplots()
 ax.scatter(tx, ty) 
 
-for x0, y0, path in zip(tx, ty,paths):
-    ab = AnnotationBbox(getImage(path), (x0, y0), frameon=False)
+for x0, y0, path, label in zip(tx, ty,paths, kmeans.labels_):
+    if label == 0:
+        colour = "red"
+    elif label == 1:
+        colour = "blue"
+    else:
+        colour = "green"
+    ab = AnnotationBbox(getImage(path), (x0, y0), bboxprops = dict(edgecolor=colour))
     ax.add_artist(ab)
 
 plt.show()
 
-"""
-# initialize a matplotlib plot
-fig = plt.figure()
-ax = fig.add_subplot(111)
 
-# for every class, we'll add a scatter plot separately
-for label in colors_per_class:
-    # find the samples of the current class in the data
-    indices = [i for i, l in enumerate(labels) if l == label]
-
-    # extract the coordinates of the points of this class only
-    current_tx = np.take(tx, indices)
-    current_ty = np.take(ty, indices)
-
-    # convert the class color to matplotlib format
-    color = np.array(colors_per_class[label], dtype=np.float) / 255
-
-    # add a scatter plot with the corresponding color and label
-    ax.scatter(current_tx, current_ty, c=color, label=label)
-
-# build a legend using the labels we set previously
-ax.legend(loc='best')
-
-# finally, show the plot
-plt.show()
-"""
