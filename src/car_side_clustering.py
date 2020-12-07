@@ -7,6 +7,7 @@ import matplotlib.pyplot as plt
 from matplotlib.offsetbox import OffsetImage, AnnotationBbox
 import cv2
 from sklearn.cluster import KMeans
+from sklearn.cluster import DBSCAN
 
 model = torch.hub.load('pytorch/vision:v0.6.0', 'vgg16', pretrained=True)
 
@@ -68,10 +69,8 @@ tx = scale_to_01_range(tx)
 ty = scale_to_01_range(ty)
 
 ########################### K-Means
-kmeans = KMeans(n_clusters=3, random_state=0).fit(np.column_stack((tx,ty)))
-
-print(kmeans.labels_)
-
+clustering = DBSCAN().fit(np.column_stack((tx,ty)))
+print(clustering.labels_)
 
 def getImage(path):
     return OffsetImage(cv2.resize(plt.imread(path), (50, 50)))
@@ -79,7 +78,7 @@ def getImage(path):
 fig, ax = plt.subplots()
 ax.scatter(tx, ty) 
 
-for x0, y0, path, label in zip(tx, ty,paths, kmeans.labels_):
+for x0, y0, path, label in zip(tx, ty,paths, clustering.labels_):
     if label == 0:
         colour = "red"
     elif label == 1:
